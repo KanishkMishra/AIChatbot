@@ -2,10 +2,11 @@
 <html>
     <head>
         <title>AI Assistant</title>
-        <script src="/static/script.js"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
     </head>
     <body>
-        <h1>College Helpdesk Bot</h1>
+        <h1>AI Helpdesk Bot</h1>
 
         <div id="chat"></div>
 
