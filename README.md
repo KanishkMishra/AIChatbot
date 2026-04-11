@@ -15,4 +15,5 @@ An AI-powered chatbot designed to answer any queries about the topic of choice.
 ## Setup
 1. Clone repo
 2. Add `.env` file with API key
-3. Run `python app.py`
+3. Enter vertual environemnt with python 3.13.12 `venv\Scripts\activate`
+4. Run `python app.py`
