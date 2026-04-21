@@ -3,7 +3,6 @@
     <head>
         <title>AI Assistant</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-        <script src="{{ url_for('static', filename='script.js') }}"></script>
     </head>
     <body>
         <h1>AI Helpdesk Bot</h1>
@@ -12,5 +11,11 @@
 
         <input id="input" type="text" placeholder="Ask something..." />
         <button onclick="sendMessage()">Send</button>
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
     </body>
+    <footer id="footer">
+        <a href="mailto:KanishkMishra3528@gmail.com">Kanishk's Email</a>
+        <a href="https://github.com/KanishkMishra">Other Github Projects</a>
+        <a href="https://www.linkedin.com/in/kanishk-mishra-/">Kanishk's LinkedIn</a>
+    </footer>
 </html>

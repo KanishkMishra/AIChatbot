@@ -2,7 +2,19 @@ async function sendMessage() {
     const input = document.getElementById("input");
     const chat = document.getElementById("chat");
 
-    const message = input.value;
+    const message = input.value.trim();
+    if (!message) return;
+
+    // show user message immediately
+    chat.innerHTML += `<p class="user"><b>You:</b> ${message}</p>`;
+
+    const typingId = "typing-" + Date.now();
+    chat.innerHTML += `<p id="${typingId}" class="bot">Bot is typing...</p>`;
+
+    chat.scrollTop = chat.scrollHeight;
+    input.value = "";
+
+    await new Promise(resolve => setTimeout(resolve, 10));
 
     const res = await fetch("/chat", {
         method: "POST",
@@ -12,17 +24,19 @@ async function sendMessage() {
         body: JSON.stringify({ message })
     });
 
-    let data;
-
     try {
-        data = await res.json();
+        const data = await res.json();
+        document.getElementById(typingId).innerHTML =
+            `<b>Bot:</b> ${data.response}`;
     } catch (err) {
-        chat.innerHTML += `<p style="color:red;">Server error (not JSON)</p>`;
-        return;
+        document.getElementById(typingId).innerHTML =
+            `<span style="color:red;">Server error</span>`;
     }
-
-    chat.innerHTML += `<p><b>You:</b> ${message}</p>`;
-    chat.innerHTML += `<p><b>Bot:</b> ${data.response}</p>`;
-
-    input.value = "";
 }
+
+document.getElementById("input").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        e.preventDefault();  
+        sendMessage();
+    }
+});
