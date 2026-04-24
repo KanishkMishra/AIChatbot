@@ -1,37 +1,60 @@
+console.log("SCRIPT LOADED");
+
 async function sendMessage() {
+    console.log("sendMessage CALLED");
+
     const input = document.getElementById("input");
     const chat = document.getElementById("chat");
-
+    const fileInput = document.getElementById("myfile")
+    
+    const file = fileInput.files[0];
     const message = input.value.trim();
-    if (!message) return;
+    if (!message && !file) return;
 
     // show user message immediately
-    chat.innerHTML += `<p class="user"><b>You:</b> ${message}</p>`;
+    if (message)
+        chat.innerHTML += `<p class="user"><b>You:</b> ${message}</p>`;
+
+    if (file)
+        chat.innerHTML += `<p class="user"><b>File:</b> ${file.name}</p>`;
 
     const typingId = "typing-" + Date.now();
     chat.innerHTML += `<p id="${typingId}" class="bot">Bot is typing...</p>`;
 
     chat.scrollTop = chat.scrollHeight;
-    input.value = "";
+    
+    const formData = new FormData();
+    formData.append("message", message);
+    if (file)
+        formData.append("file", file);
 
     await new Promise(resolve => setTimeout(resolve, 10));
 
     const res = await fetch("/chat", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ message })
+        body: formData
     });
 
+    let data;
+
     try {
-        const data = await res.json();
+        data = await res.json();
         document.getElementById(typingId).innerHTML =
             `<b>Bot:</b> ${data.response}`;
-    } catch (err) {
+    } catch {
         document.getElementById(typingId).innerHTML =
-            `<span style="color:red;">Server error</span>`;
+            `<span style="color:red;">Server error (not JSON)</span>`;
+        return;
     }
+
+    if (!res.ok) {
+        document.getElementById(typingId).innerHTML =
+            `<span style="color:red;">${data.response}</span>`;
+        return;
+    }
+
+    input.value = "";
+    fileInput.value = "";
 }
 
 document.getElementById("input").addEventListener("keydown", function(e) {
