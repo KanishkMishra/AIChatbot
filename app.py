@@ -3,6 +3,7 @@ import os
 import base64
 from dotenv import load_dotenv
 from google import genai
+from datetime import datetime
 
 load_dotenv()
 
@@ -14,41 +15,58 @@ chat_history = []
 
 # Query Gemini
 def get_response(user_message, file=None):
-    contents = []
-
     if user_message:
-        contents.append({"text": user_message})
+        chat_history.append({
+            "role": "user",
+            "parts": [
+                {"text": f"[{datetime.now().strftime('%H:%M:%S')}] User: {user_message}"}
+            ]
+        })
 
     if file and file.filename:
         file_bytes = file.read()
 
         if len(file_bytes) > 5 * 1024 * 1024:
             return "File too large. Please upload a smaller file."
-        contents.append({
-            "text": "Summarize this document."
-        })
         
-        contents.append({
-            "inline_data": {
-                "mime_type": file.mimetype,
-                "data": base64.b64encode(file_bytes).decode("utf-8")
-            }
+        chat_history.append({
+            "role": "user",
+            "parts": [
+                {"text": "Summarize this document."},
+                {
+                    "inline_data": {
+                        "mime_type": file.mimetype,
+                        "data": base64.b64encode(file_bytes).decode("utf-8")
+                    }
+                }
+            ]
         })
 
-    if not contents:
+    if not user_message and not (file and file.filename):
         return "Please enter a message or upload a file."
+
+    recent_history = chat_history[-100:]
 
     print("Sending to Gemini...")
 
     response = client.models.generate_content(
         model="gemini-3-flash-preview",
-        contents=contents
+        contents=recent_history
     )
 
     print("Received response")
 
+    bot_reply = response.text if response.text else "No response from model."
 
-    return response.text if response.text else "No response from model."
+    # Add bot reply to history
+    chat_history.append({
+        "role": "model",
+        "parts": [
+            {"text": f"[{datetime.now().strftime('%H:%M:%S')}] Bot: {bot_reply}"}
+        ]
+    })
+
+    return bot_reply
 
 @app.route("/")
 def home():
