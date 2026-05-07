@@ -19,7 +19,7 @@ def get_response(user_message, file=None):
         chat_history.append({
             "role": "user",
             "parts": [
-                {"text": f"[{datetime.now().strftime('%H:%M:%S')}] User: {user_message}"}
+                {"text": f"[{datetime.now().astimezone().strftime('%H:%M:%S')} {datetime.now().astimezone().tzinfo}] - {user_message}"}
             ]
         })
 
@@ -62,7 +62,7 @@ def get_response(user_message, file=None):
     chat_history.append({
         "role": "model",
         "parts": [
-            {"text": f"[{datetime.now().strftime('%H:%M:%S')}] Bot: {bot_reply}"}
+            {"text": bot_reply}
         ]
     })
 
