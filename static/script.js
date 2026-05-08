@@ -39,8 +39,10 @@ async function sendMessage() {
 
     try {
         data = await res.json();
+        const formatted = marked.parse(data.response);
+        console.log(formatted);
         document.getElementById(typingId).innerHTML =
-            `<b>Bot:</b> ${data.response}`;
+            `<b>Bot:</b> ${formatted}`;
     } catch {
         document.getElementById(typingId).innerHTML =
             `<span style="color:red;">Server error (not JSON)</span>`;
