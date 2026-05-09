@@ -3,6 +3,7 @@ import os
 import base64
 from dotenv import load_dotenv
 from google import genai
+from groq import Groq
 from datetime import datetime
 
 load_dotenv()
@@ -10,10 +11,14 @@ load_dotenv()
 app = Flask(__name__)
 
 # Configure Gemini
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+# client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+# Configure Groq
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+
 chat_history = []
 
-# Query Gemini
+# Query AI
 def get_response(user_message, file=None):
     if user_message:
         chat_history.append({
@@ -49,14 +54,45 @@ def get_response(user_message, file=None):
 
     print("Sending to Gemini...")
 
+    # =========================
+    # GEMINI CALL (PHASED OUT)
+    # =========================
+    """
     response = client.models.generate_content(
         model="gemini-3-flash-preview",
         contents=recent_history
     )
 
-    print("Received response")
-
     bot_reply = response.text if response.text else "No response from model."
+    """
+
+    # =========================
+    # GROQ CALL 
+    # =========================
+    groq_messages = []
+    for msg in recent_history:
+        if "parts" in msg:
+            text_parts = []
+            for part in msg["parts"]:
+                if "text" in part:
+                    text_parts.append(part["text"])
+            content = "\n".join(text_parts)
+
+            role = "assistant" if msg["role"] == "model" else "user"
+
+            groq_messages.append({
+                "role": role,
+                "content": content
+            })
+
+    response = client.chat.completions.create(
+        messages=groq_messages,
+        model="llama-3.3-70b-versatile",
+    )
+
+    bot_reply = response.choices[0].message.content
+
+    print("Received response")
 
     # Add bot reply to history
     chat_history.append({
