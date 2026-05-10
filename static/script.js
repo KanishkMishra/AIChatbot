@@ -1,7 +1,14 @@
 console.log("SCRIPT LOADED");
+let messageSent = false;
+let typingId;
 
 async function sendMessage() {
     console.log("sendMessage CALLED");
+
+    if (messageSent) {
+        document.getElementById(typingId).innerHTML = "Please wait. Bot is typing...";
+        return;
+    }
 
     const input = document.getElementById("input");
     const chat = document.getElementById("chat");
@@ -17,8 +24,9 @@ async function sendMessage() {
 
     if (file)
         chat.innerHTML += `<p class="user"><b>File:</b> ${file.name}</p>`;
-
-    const typingId = "typing-" + Date.now();
+    
+    messageSent = true;
+    typingId = "typing-" + Date.now();
     chat.innerHTML += `<p id="${typingId}" class="bot">Bot is typing...</p>`;
 
     chat.scrollTop = chat.scrollHeight;
@@ -43,10 +51,12 @@ async function sendMessage() {
         console.log(formatted);
         document.getElementById(typingId).innerHTML =
             `<b>Bot:</b> ${formatted}`;
+        messageSent = false;
     } catch {
         document.getElementById(typingId).innerHTML =
             `<span style="color:red;">Server error (not JSON)</span>`;
         return;
+        messageSent = false;
     }
 
     if (!res.ok) {
