@@ -41,6 +41,11 @@ button {
     border-radius: 5px;
 }
 
+.bot p {
+    display: inline;
+    margin: 0;
+}
+
 #myfile {
     padding: 10px 20px;
     width: 100%;

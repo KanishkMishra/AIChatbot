@@ -52,7 +52,7 @@ def get_response(user_message, file=None):
 
     recent_history = chat_history[-100:]
 
-    print("Sending to Gemini...")
+    print("Sending to AI...")
 
     # =========================
     # GEMINI CALL (PHASED OUT)
