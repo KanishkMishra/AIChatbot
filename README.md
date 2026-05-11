@@ -10,6 +10,7 @@ An AI-powered chatbot designed to answer any queries about the topic of choice.
 ## Tech Stack
 - Python (Flask)
 - Google Gemini API
+- Groq API
 - HTML/CSS/JavaScript
 
 ## Setup

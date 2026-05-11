@@ -52,6 +52,7 @@ async function sendMessage() {
         document.getElementById(typingId).innerHTML =
             `<b>Bot:</b> ${formatted}`;
         messageSent = false;
+        speak(data.response);
     } catch {
         document.getElementById(typingId).innerHTML =
             `<span style="color:red;">Server error (not JSON)</span>`;
@@ -67,6 +68,18 @@ async function sendMessage() {
 
     input.value = "";
     fileInput.value = "";
+}
+
+function speak(text) {
+    console.log("Speaking:", text);
+
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    utterance.onstart = () => console.log("Speech started");
+    utterance.onend = () => console.log("Speech ended");
+    utterance.onerror = (e) => console.error("Speech error:", e);
+
+    window.speechSynthesis.speak(utterance);
 }
 
 document.getElementById("input").addEventListener("keydown", function(e) {

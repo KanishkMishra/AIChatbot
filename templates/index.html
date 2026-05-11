@@ -11,6 +11,7 @@
 
         <input id="input" type="text" placeholder="Ask something..." />
         <button onclick="sendMessage()">Send</button>
+        <button onclick="speak('test audio')">Test Voice</button>
         <input type="file" id="myfile" name="myfile">
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="{{ url_for('static', filename='script.js') }}"></script>
