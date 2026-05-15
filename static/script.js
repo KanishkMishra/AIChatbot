@@ -4,8 +4,8 @@ console.log("SCRIPT LOADED");
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition()
 recognition.lang = "en-US";
-recognition.continuous = false;   // stop after one sentence
-recognition.interimResults = false; // only final result
+recognition.continuous = true;   
+recognition.interimResults = false; 
 
 // Prevent bot from being spammed
 let messageSent = false;
@@ -83,6 +83,7 @@ async function sendMessage() {
 function listen() {
     console.log("listening");
     recognition.start();
+    document.getElementById("listen").textContent = "Listening...";
 }
 
 recognition.onresult = (event) => {
@@ -100,6 +101,7 @@ recognition.onerror = (event) => {
 
 recognition.onend = () => {
     console.log("Recognition ended");
+    document.getElementById("listen").textContent = "Audio Input"
 };
 
 // text to speech
