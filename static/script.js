@@ -1,4 +1,13 @@
 console.log("SCRIPT LOADED");
+
+// configure speech recognition
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition()
+recognition.lang = "en-US";
+recognition.continuous = false;   // stop after one sentence
+recognition.interimResults = false; // only final result
+
+// Prevent bot from being spammed
 let messageSent = false;
 let typingId;
 
@@ -70,6 +79,30 @@ async function sendMessage() {
     fileInput.value = "";
 }
 
+// Start speech recognition 
+function listen() {
+    console.log("listening");
+    recognition.start();
+}
+
+recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    console.log("Heard:", transcript);
+
+    // automatically send message
+    document.getElementById("input").value = transcript;
+    sendMessage();
+}
+
+recognition.onerror = (event) => {
+    console.error("Speech recognition error:", event.error);
+};
+
+recognition.onend = () => {
+    console.log("Recognition ended");
+};
+
+// text to speech
 function speak(text) {
     console.log("Speaking:", text);
 
@@ -82,6 +115,7 @@ function speak(text) {
     window.speechSynthesis.speak(utterance);
 }
 
+// Pressing enter sends message
 document.getElementById("input").addEventListener("keydown", function(e) {
     if (e.key === "Enter") {
         e.preventDefault();  
